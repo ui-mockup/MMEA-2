@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="ms" data-theme="maritim">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maritim Malaysia — Portal Rasmi (Konsep 3.3)</title>
+  <meta name="description" content="Portal Rasmi Agensi Penguatkuasaan Maritim Malaysia (APMM)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Fon: Montserrat (tajuk) + Poppins (teks) — ikut gaya PDRM-1 -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- daisyUI 5 + Tailwind CSS 4 -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/iconify-icon@2/dist/iconify-icon.min.js"></script>
+
+  <style>
+    /* Tema "maritim" — biru & kuning sahaja */
+    [data-theme="maritim"] {
+      color-scheme: light;
+      --color-base-100: #ffffff;
+      --color-base-200: #eef3fa;
+      --color-base-300: #d6e0ee;
+      --color-base-content: #0c1f3f;
+      --color-primary: #0a2a5c;          /* biru laut APMM */
+      --color-primary-content: #ffffff;
+      --color-secondary: #f5b800;        /* kuning APMM */
+      --color-secondary-content: #0a1a3a;
+      --color-accent: #1d5fd1;           /* biru terang */
+      --color-accent-content: #ffffff;
+      --color-neutral: #061634;
+      --color-neutral-content: #ffffff;
+      --color-info: #1d5fd1;
+      --color-success: #1d5fd1;
+      --color-warning: #f5b800;
+      --color-error: #f5b800;
+      --radius-selector: 0.25rem;
+      --radius-field: 0.25rem;
+      --radius-box: 0.5rem;
+      --border: 1px;
+      --depth: 0;
+      --noise: 0;
+    }
+    :root {
+      --a11y-primary: #0a2a5c; --a11y-primary-2: #1d5fd1; --a11y-accent: #f5b800;
+      --a11y-blue: #1d5fd1; --a11y-soft: #eef3fa; --a11y-font: "Poppins", system-ui, sans-serif;
+    }
+    #govInfo { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+    #govInfo > div { overflow: hidden; }
+    #govInfo[data-open="true"] { grid-template-rows: 1fr; }
+    #govToggle[aria-expanded="true"] iconify-icon { transform: rotate(180deg); }
+
+    /* Logo: Jata + garisan + lambang APMM (dipotong tepat, ikut v2-1/index-v2-2) + teks rasmi */
+    .brand { --crest-h: 46px; --brand-gap: 12px; }
+    .brand__jata { height: 42px; width: auto; }
+    .brand__divider { width: 1px; height: 36px; background: #d6e0ee; margin: 0 var(--brand-gap); flex: none; }
+    /* Kawasan lambang dalam logo-mobile.png: x 33–139, y 17–131 (107 x 115 px, imej 566 x 150) */
+    .crest { display: block; flex: none; overflow: hidden; height: var(--crest-h); width: calc(var(--crest-h) * 107 / 115); }
+    .crest img { display: block; max-width: none; width: auto; height: calc(var(--crest-h) * 150 / 115); margin-left: calc(var(--crest-h) * -33 / 115); margin-top: calc(var(--crest-h) * -17 / 115); }
+    .brand__text { margin-left: var(--brand-gap); line-height: 1.15; }
+    .brand__pre, .brand__post { display: block; font-size: 11px; font-weight: 600; color: rgba(12,31,63,.6); letter-spacing: .02em; }
+    .brand__name { display: block; margin: 2px 0; font-size: 13px; font-weight: 800; color: #0a2a5c; text-transform: uppercase; white-space: nowrap; letter-spacing: .01em; }
+    .brand__name--short { display: none; }
+    @media (max-width: 639px) { .brand__name--long { display: none; } .brand__name--short { display: block; } }
+    @media (max-width: 639px) { .brand { --crest-h: 40px; --brand-gap: 9px; } .brand__jata { height: 36px; } .brand__divider { height: 30px; } .brand__name { font-size: 12px; } }
+
+    /* ===== Perkhidmatan — kad foto penuh (gaya Logimax home-02) ===== */
+    .svc-track { display: flex; gap: 8px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+    .svc-card { position: relative; flex: 0 0 calc((100% - 24px) / 4); aspect-ratio: 49 / 57; overflow: hidden; scroll-snap-align: start; cursor: pointer; background: #061634; }
+    .svc-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s ease; }
+    .svc-card::after { content: ""; position: absolute; inset: 0; background: rgba(6, 22, 52, .78); opacity: 0; transition: opacity .35s ease; }
+    .svc-card__body { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 0 11% 11%; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; color: #fff; opacity: 0; transform: translateY(18px); transition: opacity .35s ease, transform .35s ease; }
+    .svc-card__ic { position: absolute; z-index: 2; top: 11%; left: 11%; color: #f5b800; font-size: 40px; opacity: 0; transform: translateY(-10px); transition: opacity .35s ease .05s, transform .35s ease .05s; }
+    .svc-card__go { flex: none; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 9999px; background: #f5b800; color: #0a1a3a; font-size: 26px; transition: transform .3s ease, background .3s ease; }
+    .svc-card:hover .svc-card__go { transform: rotate(-45deg); }
+    .svc-card:hover img, .svc-card.is-active img { transform: scale(1.06); }
+    .svc-card:hover::after, .svc-card:hover .svc-card__body, .svc-card:hover .svc-card__ic,
+    .svc-track:not(:hover) .svc-card.is-active::after,
+    .svc-track:not(:hover) .svc-card.is-active .svc-card__body,
+    .svc-track:not(:hover) .svc-card.is-active .svc-card__ic { opacity: 1; transform: none; }
+    @media (hover: none) {
+      .svc-card::after { opacity: 1; background: linear-gradient(to top, rgba(6,22,52,.9), rgba(6,22,52,.15) 60%); }
+      .svc-card__body, .svc-card__ic { opacity: 1; transform: none; }
+    }
+    @media (max-width: 1023px) { .svc-card { flex-basis: calc((100% - 8px) / 2); } }
+    @media (max-width: 639px)  { .svc-card { flex-basis: 82%; } .svc-card__go { width: 52px; height: 52px; font-size: 22px; } }
+
+    /* Perkhidmatan: seret kiri/kanan dengan tetikus */
+    .svc-track { cursor: grab; user-select: none; }
+    .svc-track.is-dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+    .svc-track.is-dragging .svc-card { pointer-events: none; }
+    .svc-card img { -webkit-user-drag: none; }
+    .svc-progress { height: 3px; background: #d6e0ee; border-radius: 9999px; overflow: hidden; }
+    .svc-progress span { display: block; height: 100%; width: 25%; background: #f5b800; border-radius: inherit; transition: transform .2s ease; }
+
+    /* Personalisasi */
+    /* Kad pengguna — gaya LKIM-3, warna logo APMM (biru laut, kuning, biru langit) */
+    .qcard { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 132px; padding: 24px; border-radius: 14px; text-align: left; color: #fff; cursor: pointer; box-shadow: 0 14px 34px -14px rgba(6,22,52,.45); transition: transform .25s ease, box-shadow .25s ease; }
+    .qcard::after { content: ""; position: absolute; right: -30px; bottom: -30px; width: 130px; height: 130px; border-radius: 50%; background: rgba(255,255,255,.09); transition: transform .35s ease; }
+    .qcard:hover { transform: translateY(-3px); }
+    .qcard:hover::after { transform: scale(1.15); }
+    .qc-navy { background: linear-gradient(135deg, #12407f, #061634); }
+    .qc-gold { background: linear-gradient(135deg, #f7c531, #d99a00); color: #0a1a3a; }
+    .qc-sky  { background: linear-gradient(135deg, #2f7be6, #1450b8); }
+    .qcard .qc-label { position: relative; z-index: 1; font-family: "Montserrat", sans-serif; font-weight: 800; font-size: 20px; line-height: 1.25; }
+    .qcard .qc-foot { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
+    .qcard .qc-foot > span:first-child { opacity: .85; }
+    .qcard .arrow-chip { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,.2); font-size: 16px; transition: transform .25s ease, background .25s ease; }
+    .qc-gold .arrow-chip { background: rgba(10,26,58,.12); }
+    .qcard[aria-selected="true"] { outline: 3px solid #fff; outline-offset: -7px; }
+    .qcard[aria-selected="true"] .arrow-chip { transform: rotate(90deg); background: #fff; color: #0a2a5c; }
+    .qc-gold[aria-selected="true"] { outline-color: rgba(10,26,58,.35); }
+
+    /* Akses Segera (lajur) */
+    .quick { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #d6e0ee; border-radius: .6rem; font-size: .85rem; font-weight: 500; transition: border-color .2s, background .2s; }
+    .quick iconify-icon { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: .5rem; background: #eef3fa; color: #0a2a5c; font-size: 17px; transition: background .2s; }
+    .quick:hover { border-color: #f5b800; background: #fffbea; }
+    .quick:hover iconify-icon { background: #f5b800; }
+    .aud-link { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid #d6e0ee; border-radius: .5rem; font-size: .85rem; font-weight: 500; transition: border-color .2s, background .2s; }
+    .aud-link iconify-icon { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 9999px; background: #eef3fa; color: #0a2a5c; font-size: 16px; transition: background .2s; }
+    .aud-link:hover { border-color: #f5b800; background: #fffbea; }
+    .aud-link:hover iconify-icon { background: #f5b800; }
+
+    /* Talian kecemasan atas footer (merah seperti maritim/index.html, lebih padat) */
+    .sos-cta { position: relative; overflow: hidden; color: #fff; background: linear-gradient(120deg, #D0202E 0%, #A3121E 100%); }
+    .sos-cta::after { content: "999"; position: absolute; right: -10px; top: 50%; transform: translateY(-50%); font-family: "Montserrat", sans-serif; font-size: 8rem; font-weight: 800; opacity: .08; line-height: 1; pointer-events: none; }
+
+    /* Marquee logo agensi */
+    .marquee { overflow: hidden; mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent); }
+    .marquee__track { display: flex; gap: 56px; width: max-content; animation: marquee 32s linear infinite; }
+    .marquee:hover .marquee__track { animation-play-state: paused; }
+    @keyframes marquee { to { transform: translateX(-50%); } }
+    @media (prefers-reduced-motion: reduce) { .marquee__track { animation: none; } }
+  </style>
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+      --font-heading: "Montserrat", "Poppins", ui-sans-serif, sans-serif;
+      --color-navy: #0a2a5c;
+      --color-navy-900: #061634;
+      --color-navy-700: #12407f;
+      --color-sky: #1d5fd1;
+      --color-gold: #f5b800;
+      --color-base-100: #ffffff;
+      --color-base-200: #eef3fa;
+      --color-base-300: #d6e0ee;
+      --color-base-content: #0c1f3f;
+      --color-primary: #0a2a5c;
+      --color-primary-content: #ffffff;
+      --color-secondary: #f5b800;
+      --color-secondary-content: #0a1a3a;
+      --color-accent: #1d5fd1;
+      --color-accent-content: #ffffff;
+      --color-neutral: #061634;
+      --color-neutral-content: #ffffff;
+      --radius-box: 0.5rem;
+      --radius-field: 0.25rem;
+      --radius-selector: 0.25rem;
+    }
+    @layer base {
+      body { @apply bg-base-100 text-base-content antialiased; }
+      h1, h2, h3, h4, .font-heading { font-family: var(--font-heading); letter-spacing: -0.01em; }
+    }
+    @utility container { @apply mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8; }
+
+    /* Mega menu dalam topbar terapung (sama seperti PDRM-1) */
+    .nav-item > .mega {
+      position: absolute; left: 0; right: 0; top: 100%;
+      padding-top: 10px;
+      visibility: hidden; opacity: 0; transform: translateY(4px);
+      transition: opacity .15s ease .2s, transform .15s ease .2s, visibility 0s linear .35s;
+    }
+    .nav-item:hover > .mega, .nav-item:focus-within > .mega {
+      visibility: visible; opacity: 1; transform: none; transition-delay: 0s;
+    }
+    .nav-item:hover > a iconify-icon { transform: rotate(180deg); }
+    .mega-col p { @apply flex items-center gap-2 text-xs font-bold tracking-wider uppercase; color: #12407f; }
+    .mega-col p::before { content: ""; width: 14px; height: 3px; border-radius: 9999px; background: #f5b800; flex: none; }
+    /* Item submenu — tiada pautan (tiada href) */
+    .mega-col a { @apply block cursor-pointer rounded-field px-2 py-1.5 -mx-2 text-sm text-base-content/80 hover:bg-base-200 hover:text-base-content; }
+
+    .a11y-wrap { position: relative; }
+    .a11y-tooltip { position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%) translateY(-4px); background: #eef3fa; color: #0c1f3f; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 6px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s ease, transform .15s ease; z-index: 120; }
+    .a11y-wrap:hover .a11y-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { scrollbar-width: none; }
+  </style>
+</head>
+<body>
+<div id="a11y-root">
+
+<!-- ============ JALUR UTILITI ============ -->
+<div class="bg-navy-900 border-b border-white/10 text-white">
+  <div class="container flex h-11 items-center justify-between text-sm">
+    <p class="flex items-center gap-2 text-white/80">
+      <svg viewBox="0 0 28 14" class="h-3 w-[22px] rounded-[2px]" aria-hidden="true"><rect width="28" height="14" fill="#cc0001"/><g fill="#fff"><rect y="1" width="28" height="1"/><rect y="3" width="28" height="1"/><rect y="5" width="28" height="1"/><rect y="7" width="28" height="1"/><rect y="9" width="28" height="1"/><rect y="11" width="28" height="1"/><rect y="13" width="28" height="1"/></g><rect width="14" height="8" fill="#010066"/><circle cx="5.6" cy="4" r="2.6" fill="#fc0"/><circle cx="6.4" cy="4" r="2.1" fill="#010066"/><path d="m10 2 .4 1.3H11.8l-1.1.8.4 1.3-1.1-.8-1.1.8.4-1.3-1.1-.8h1.4z" fill="#fc0"/></svg>
+      <span class="max-sm:hidden">Laman Web Rasmi Kerajaan Malaysia</span>
+      <span class="sm:hidden">Portal Rasmi</span>
+      <button type="button" id="govToggle" aria-expanded="false" aria-controls="govInfo" class="text-secondary hover:bg-white/10 ms-1 inline-flex items-center gap-1 rounded-field border border-transparent px-1.5 py-0.5 font-medium transition aria-expanded:border-secondary/40 aria-expanded:bg-white/5">
+        <span class="max-sm:hidden">Kenal pasti begini</span><span class="sm:hidden">Kenal pasti</span>
+        <iconify-icon icon="lucide:chevron-down" class="transition-transform duration-200"></iconify-icon>
+      </button>
+    </p>
+    <div class="flex items-center gap-3">
+      <div class="hidden items-center gap-3.5 md:flex">
+        <a href="#" class="tooltip tooltip-bottom opacity-80 hover:opacity-100" data-tip="Soalan Lazim"><img src="assets/img/ikon/soalan-lazim.png" alt="Soalan Lazim" class="h-[19px] w-auto brightness-0 invert" /></a>
+        <a href="#" class="tooltip tooltip-bottom opacity-80 hover:opacity-100" data-tip="Hubungi"><img src="assets/img/ikon/hubungi.png" alt="Hubungi" class="h-[19px] w-auto brightness-0 invert" /></a>
+        <a href="#" class="tooltip tooltip-bottom opacity-80 hover:opacity-100" data-tip="Maklum Balas"><img src="assets/img/ikon/maklumbalas.png" alt="Maklum Balas" class="h-[19px] w-auto brightness-0 invert" /></a>
+        <a href="#" class="tooltip tooltip-bottom opacity-80 hover:opacity-100" data-tip="Peta Laman"><img src="assets/img/ikon/peta-laman.png" alt="Peta Laman" class="h-[19px] w-auto brightness-0 invert" /></a>
+      </div>
+      <div class="hidden h-4 w-px bg-white/25 md:block"></div>
+      <div id="langSwitch" class="flex items-center gap-1 text-[13px] font-bold">
+        <button type="button" class="text-white" aria-pressed="true">BM</button>
+        <span class="text-white/30">/</span>
+        <button type="button" class="text-white/50 hover:text-white" aria-pressed="false">EN</button>
+      </div>
+      <div class="a11y-wrap">
+        <button class="btn btn-circle btn-ghost btn-sm text-white hover:bg-white/10 hover:border-transparent" data-a11y-open type="button" aria-haspopup="dialog" aria-label="Alat Kebolehcapaian">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="7.2" r="1.4" fill="currentColor" stroke="none"/><path d="M6.5 9.5c3.6 1.2 7.4 1.2 11 0M12 9.5v9M9 21l3-5.5 3 5.5"/></svg>
+        </button>
+        <span class="a11y-tooltip">Alat Kebolehcapaian</span>
+      </div>
+      <button class="btn btn-circle btn-ghost btn-sm text-white hover:bg-white/10 hover:border-transparent" type="button" aria-label="Cari" onclick="document.getElementById('searchModal').showModal()">
+        <iconify-icon icon="lucide:search" class="text-base"></iconify-icon>
+      </button>
+    </div>
+  </div>
+  <div id="govInfo" data-open="false">
+    <div>
+      <div class="container grid gap-6 py-6 md:grid-cols-2 md:gap-12">
+        <div class="flex gap-4">
+          <span class="text-secondary inline-flex size-10 flex-none items-center justify-center rounded-full bg-white/10"><iconify-icon icon="lucide:landmark" class="text-xl"></iconify-icon></span>
+          <div>
+            <p class="font-semibold">Pautan portal rasmi berakhir dengan .gov.my</p>
+            <p class="mt-1 text-sm text-white/70">Sekiranya anda melihat pautan selain <b class="text-white">.gov.my</b>, segera tutup halaman itu walaupun ia menyerupai portal rasmi!</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <span class="text-secondary inline-flex size-10 flex-none items-center justify-center rounded-full bg-white/10"><iconify-icon icon="lucide:lock-keyhole" class="text-xl"></iconify-icon></span>
+          <div>
+            <p class="font-semibold">Portal yang selamat menggunakan HTTPS</p>
+            <p class="mt-1 text-sm text-white/70">Periksa ikon kunci mangga ( <iconify-icon icon="lucide:lock" class="align-[-2px] text-white"></iconify-icon> ) atau <b class="text-white">https://</b> di depan pautan. Sekiranya tiada, tinggalkan laman sesawang serta merta.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TOPBAR TERAPUNG + MEGA MENU ============ -->
+<!-- Semua item submenu sengaja TIADA pautan (tiada href) -->
+<div id="topbar" class="group sticky top-0 z-50 flex justify-center pt-0 transition-all duration-300 sm:pt-3 data-[scrolled=true]:sm:pt-2">
+  <div class="container !px-0 sm:!px-4">
+    <nav class="bg-base-100/90 border-base-200 relative flex h-16 items-center justify-between border-b px-4 backdrop-blur transition-all duration-300 sm:rounded-full sm:border sm:px-3 sm:ps-5 group-data-[scrolled=true]:shadow-sm" aria-label="Menu utama">
+      <a href="#" class="brand flex items-center" aria-label="Laman Utama Maritim Malaysia">
+        <img src="assets/img/jata.png" alt="Jata Negara Malaysia" class="brand__jata max-sm:hidden" />
+        <span class="brand__divider max-sm:hidden" aria-hidden="true"></span>
+        <span class="crest"><img src="assets/img/logo-mobile.png" alt="Lambang Maritim Malaysia" /></span>
+        <span class="brand__text">
+          <span class="brand__pre">Laman Web Rasmi</span>
+          <span class="brand__name brand__name--long">Agensi Penguatkuasaan Maritim Malaysia</span>
+          <span class="brand__name brand__name--short">Maritim Malaysia</span>
+          <span class="brand__post">Kementerian Dalam Negeri</span>
+        </span>
+      </a>
+
+      <ul class="hidden h-full items-center xl:flex">
+        <li class="nav-item flex h-full items-center"><a href="#" class="btn btn-ghost btn-sm rounded-full font-medium bg-base-200">Utama</a></li>
+
+        <li class="nav-item flex h-full items-center">
+          <a tabindex="0" class="btn btn-ghost btn-sm rounded-full font-medium">Profil <iconify-icon icon="lucide:chevron-down" class="transition-transform"></iconify-icon></a>
+          <div class="mega">
+            <div class="bg-base-100 border-base-200 rounded-box grid grid-cols-4 gap-6 border p-6 shadow-xl">
+              <div class="mega-col"><p>Mengenai APMM</p><div class="mt-3"><a>Latar Belakang APMM</a><a>Visi &amp; Misi</a><a href="objektif.html">Objektif</a><a>Fungsi</a><a>Logo &amp; Reka Bentuk</a></div></div>
+              <div class="mega-col"><p>Kepimpinan</p><div class="mt-3"><a>Perutusan Ketua Pengarah</a><a>Carta Organisasi</a><a>Ketua Pegawai Maklumat</a></div></div>
+              <div class="mega-col"><p>Perkhidmatan Pelanggan</p><div class="mt-3"><a>Misi Perkhidmatan Pelanggan</a><a>Piagam Pelanggan</a><a>Pensijilan MS ISO</a></div></div>
+              <div class="rounded-box group/c relative overflow-hidden">
+                <img src="assets/img/berita/HARI_BERSAMA_MEDIA_2026.jpeg" alt="Warga Maritim Malaysia" class="h-full min-h-40 w-full object-cover transition duration-500 group-hover/c:scale-105" />
+                <div class="absolute inset-0 bg-linear-to-t from-navy-900/90 to-transparent"></div>
+                <p class="absolute bottom-3 left-4 right-4 text-sm font-semibold text-white">Menjaga Perairan, Melindungi Rakyat</p>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item flex h-full items-center">
+          <a tabindex="0" class="btn btn-ghost btn-sm rounded-full font-medium">Perkhidmatan <iconify-icon icon="lucide:chevron-down" class="transition-transform"></iconify-icon></a>
+          <div class="mega">
+            <div class="bg-base-100 border-base-200 rounded-box grid grid-cols-4 gap-6 border p-6 shadow-xl">
+              <div class="mega-col"><p>Keselamatan di Laut</p><div class="mt-3"><a>Mencari &amp; Menyelamat</a><a>Kawalan Pencemaran Maritim</a><a>Tindakan Khas &amp; Penyelamat</a></div></div>
+              <div class="mega-col"><p>Penguatkuasaan</p><div class="mt-3"><a>Penguatkuasaan Undang-undang</a><a>Pengawasan Udara &amp; Pantai</a><a>Pencegahan Jenayah Maritim</a></div></div>
+              <div class="mega-col"><p>e-Perkhidmatan</p><div class="mt-3"><a>Sistem Atas Talian</a><a>eAduan</a><a>Aplikasi Mudah Alih</a><a>Tender &amp; Sebut Harga</a></div></div>
+              <div class="bg-navy rounded-box p-5 text-white">
+                <span class="badge badge-secondary badge-sm font-semibold">24 Jam</span>
+                <p class="font-heading mt-3 font-bold">Pusat Operasi Maritim</p>
+                <p class="mt-1 text-sm text-white/70">03-8995 7208 · 019-261 1833</p>
+                <p class="text-secondary mt-3 text-2xl font-extrabold">999</p>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item flex h-full items-center">
+          <a tabindex="0" class="btn btn-ghost btn-sm rounded-full font-medium">Direktori <iconify-icon icon="lucide:chevron-down" class="transition-transform"></iconify-icon></a>
+          <div class="mega">
+            <div class="bg-base-100 border-base-200 rounded-box border p-6 shadow-xl">
+              <div class="mega-col"><p>Ibu Pejabat &amp; Maritim Negeri</p>
+                <div class="mt-3 grid grid-cols-3 gap-x-8">
+                  <a>Ibu Pejabat Putrajaya</a><a>Maritim Negeri Kedah &amp; Perlis</a><a>Maritim Negeri Pulau Pinang</a><a>Maritim Negeri Perak</a><a>Maritim Negeri Selangor</a><a>Maritim Negeri Melaka &amp; N. Sembilan</a><a>Maritim Negeri Johor</a><a>Maritim Negeri Pahang</a><a>Maritim Negeri Terengganu</a><a>Maritim Negeri Kelantan</a><a>Maritim Negeri Sabah</a><a>Maritim Negeri Sarawak</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item flex h-full items-center">
+          <a tabindex="0" class="btn btn-ghost btn-sm rounded-full font-medium">Media <iconify-icon icon="lucide:chevron-down" class="transition-transform"></iconify-icon></a>
+          <div class="mega">
+            <div class="bg-base-100 border-base-200 rounded-box grid grid-cols-4 gap-6 border p-6 shadow-xl">
+              <div class="mega-col"><p>Berita</p><div class="mt-3"><a>Berita Utama</a><a>Siaran Media</a><a>Aktiviti APMM</a><a>Pengumuman</a></div></div>
+              <div class="mega-col"><p>Multimedia</p><div class="mt-3"><a>Galeri Foto</a><a>Galeri Video</a><a>E-Poster HUT</a></div></div>
+              <div class="mega-col"><p>Penerbitan</p><div class="mt-3"><a>Majalah Seahawk</a><a>Laporan Tahunan</a><a>Pelan Strategik</a><a>e-Poster &amp; Infografik</a></div></div>
+              <div class="rounded-box self-start overflow-hidden"><img src="assets/img/hut/hut-1.jpg" alt="E-Poster HUT APMM" class="aspect-[4/3] w-full object-cover object-top" /></div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item flex h-full items-center">
+          <a tabindex="0" class="btn btn-ghost btn-sm rounded-full font-medium">Ruangan <iconify-icon icon="lucide:chevron-down" class="transition-transform"></iconify-icon></a>
+          <div class="mega">
+            <div class="bg-base-100 border-base-200 rounded-box grid grid-cols-4 gap-6 border p-6 shadow-xl">
+              <div class="mega-col"><p>Integriti</p><div class="mt-3"><a>Aduan Integriti</a><a>Pelan Antirasuah Organisasi</a><a>MS ISO 37001:2016</a></div></div>
+              <div class="mega-col"><p>Kerjaya</p><div class="mt-3"><a>Jawatan Kosong</a><a>Syarat Kelayakan</a><a>Latihan AMSAS</a></div></div>
+              <div class="mega-col"><p>Perolehan</p><div class="mt-3"><a>Tender</a><a>Sebut Harga</a><a>Keputusan Tender</a></div></div>
+              <div class="mega-col"><p>Lain-lain</p><div class="mt-3"><a>Inovasi</a><a>Data Terbuka</a><a>Arkib</a></div></div>
+            </div>
+          </div>
+        </li>
+
+        <li class="nav-item flex h-full items-center">
+          <a tabindex="0" class="btn btn-ghost btn-sm rounded-full font-medium">Hubungi <iconify-icon icon="lucide:chevron-down" class="transition-transform"></iconify-icon></a>
+          <div class="mega">
+            <div class="bg-base-100 border-base-200 rounded-box grid grid-cols-4 gap-6 border p-6 shadow-xl">
+              <div class="mega-col"><p>Perhubungan</p><div class="mt-3"><a>Alamat | Telefon | Faks</a><a>Peta Lokasi Maritim Malaysia</a><a>eAduan</a></div></div>
+              <div class="mega-col"><p>Bantuan</p><div class="mt-3"><a>Maklum Balas Pelanggan</a><a>Soalan Lazim</a><a>Peta Laman</a></div></div>
+              <div class="bg-base-200 rounded-box col-span-2 p-5">
+                <p class="font-semibold">Ibu Pejabat Agensi Penguatkuasaan Maritim Malaysia</p>
+                <p class="text-base-content/70 mt-1 text-sm">Aras 4-12, One IOI Square, IOI Resort, 62502 Putrajaya</p>
+                <p class="text-primary mt-3 text-xl font-bold">03-8995 7000</p>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <div class="flex items-center gap-2">
+        <label for="mobile-drawer" class="btn btn-ghost btn-square btn-sm xl:hidden" aria-label="Buka menu"><iconify-icon icon="lucide:menu" class="text-lg"></iconify-icon></label>
+      </div>
+    </nav>
+  </div>
+</div>
+
+<!-- Laci menu mudah alih — submenu tanpa pautan -->
+<div class="drawer drawer-end z-[70] xl:hidden">
+  <input id="mobile-drawer" type="checkbox" class="drawer-toggle" />
+  <div class="drawer-side">
+    <label for="mobile-drawer" aria-label="Tutup" class="drawer-overlay"></label>
+    <ul class="menu bg-base-100 min-h-full w-80 p-4">
+      <li><a class="menu-active">Utama</a></li>
+      <li><details><summary>Profil</summary><ul><li><a>Latar Belakang APMM</a></li><li><a>Visi &amp; Misi</a></li><li><a href="objektif.html">Objektif</a></li><li><a>Fungsi</a></li><li><a>Perutusan Ketua Pengarah</a></li><li><a>Carta Organisasi</a></li><li><a>Piagam Pelanggan</a></li></ul></details></li>
+      <li><details><summary>Perkhidmatan</summary><ul><li><a>Mencari &amp; Menyelamat</a></li><li><a>Penguatkuasaan Undang-undang</a></li><li><a>Pengawasan Udara &amp; Pantai</a></li><li><a>Kawalan Pencemaran Maritim</a></li><li><a>e-Perkhidmatan</a></li></ul></details></li>
+      <li><details><summary>Direktori</summary><ul><li><a>Ibu Pejabat</a></li><li><a>Maritim Negeri Johor</a></li><li><a>Maritim Negeri Selangor</a></li><li><a>Maritim Negeri Sabah</a></li><li><a>Maritim Negeri Sarawak</a></li><li><a>Semua Negeri</a></li></ul></details></li>
+      <li><details><summary>Media</summary><ul><li><a>Berita Utama</a></li><li><a>Siaran Media</a></li><li><a>Galeri Foto</a></li><li><a>Galeri Video</a></li></ul></details></li>
+      <li><details><summary>Ruangan</summary><ul><li><a>Integriti</a></li><li><a>Kerjaya</a></li><li><a>Tender</a></li><li><a>Inovasi</a></li></ul></details></li>
+      <li><details><summary>Hubungi</summary><ul><li><a>Alamat &amp; Telefon</a></li><li><a>Peta Lokasi</a></li><li><a>eAduan</a></li><li><a>Soalan Lazim</a></li></ul></details></li>
+    </ul>
+  </div>
+</div>
+
+<main>
+<!-- ============ HERO ============ -->
+<!-- Foto: "Semporna Sabah Ship-Halilintar-8-01" oleh CEphoto, Uwe Aranas (CC BY-SA 3.0, Wikimedia Commons). Tukar dengan foto rasmi APMM. -->
+<section class="bg-navy-900 relative -mt-[76px] flex min-h-[560px] items-center overflow-hidden pt-[76px] text-white md:min-h-[660px]">
+  <img src="assets/img/hero/semporna.jpg" alt="" class="absolute inset-0 h-full w-full object-cover object-center opacity-45" />
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(6,22,52,.35),#061634_75%)]"></div>
+  <div class="absolute inset-x-0 bottom-0 h-32 bg-linear-to-t from-[#061634] to-transparent"></div>
+  <div class="relative z-10 container py-12">
+    <div class="flex flex-col items-center text-center">
+      <h1 class="max-w-4xl text-3xl leading-tight font-extrabold tracking-[-0.5px] sm:text-4xl md:text-5xl lg:text-6xl">
+        Menjaga Perairan,<br />
+        <span class="text-rotate duration-[12000ms]">
+          <span class="justify-items-center">
+            <span class="text-secondary">Melindungi Rakyat</span>
+            <span class="text-secondary">Memelihara Kedaulatan</span>
+            <span class="text-secondary">Sentiasa Bersiaga</span>
+          </span>
+        </span>
+      </h1>
+      <p class="mt-5 max-w-2xl text-balance text-white/75 md:text-lg">
+        Agensi Penguatkuasaan Maritim Malaysia memastikan keselamatan dan kedaulatan Zon Maritim Malaysia 24 jam sehari, 7 hari seminggu.
+      </p>
+      <div class="mt-7 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+        <a href="#kecemasan" class="btn btn-secondary btn-lg gap-3 border-0">
+          <iconify-icon icon="lucide:siren" class="text-xl"></iconify-icon>
+          <span class="text-start"><span class="block text-base/none">Lapor Kecemasan</span><span class="text-secondary-content/70 mt-1 block text-[11px]/none">Talian 999 · 24 Jam</span></span>
+        </a>
+        <a href="#" class="btn btn-lg gap-3 border-white/25 bg-white/5 text-white shadow-none hover:bg-white/15">
+          <iconify-icon icon="lucide:message-square-warning" class="text-xl"></iconify-icon>
+          <span class="text-start"><span class="block text-base/none">eAduan</span><span class="mt-1 block text-[11px]/none opacity-70">Buat aduan dalam talian</span></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AKSES MENGIKUT PENGGUNA (kad gaya LKIM-3) — seksyen berasingan di bawah banner ============ -->
+<section class="pt-8 md:pt-10">
+  <div class="container">
+    <div class="grid gap-4 md:grid-cols-3 md:gap-5" aria-label="Akses mengikut pengguna">
+      <a href="#" class="qcard qc-navy">
+        <span class="qc-label">Umum /<br />Orang Awam</span>
+        <span class="qc-foot"><span>Laporan, aduan &amp; maklumat awam</span><span class="arrow-chip"><iconify-icon icon="lucide:arrow-up-right"></iconify-icon></span></span>
+      </a>
+      <a href="#" class="qcard qc-gold">
+        <span class="qc-label">Warga<br />APMM</span>
+        <span class="qc-foot"><span>Pegawai, anggota &amp; sumber dalaman</span><span class="arrow-chip"><iconify-icon icon="lucide:arrow-up-right"></iconify-icon></span></span>
+      </a>
+      <a href="#" class="qcard qc-sky">
+        <span class="qc-label">e-Perkhidmatan<br />Dalam Talian</span>
+        <span class="qc-foot"><span>Urusan atas talian, bila-bila masa</span><span class="arrow-chip"><iconify-icon icon="lucide:arrow-up-right"></iconify-icon></span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BERITA TERKINI (gaya PDRM-2) ============ -->
+<section class="pt-10 pb-10 md:pt-12 md:pb-12">
+  <div class="container">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <p class="text-accent flex items-center gap-2 text-sm font-bold tracking-wider uppercase"><span class="bg-secondary h-[3px] w-6 rounded-full"></span> Terkini</p>
+        <h2 class="mt-3 text-3xl font-extrabold sm:text-4xl">Berita Terkini</h2>
+        <p class="text-base-content/70 mt-3 max-w-lg">Ikuti perkembangan terbaharu operasi, penguatkuasaan dan aktiviti Maritim Malaysia.</p>
+      </div>
+      <a href="#" class="text-primary hover:text-accent inline-flex items-center gap-1.5 text-sm font-bold transition">Lihat Semua Berita <iconify-icon icon="lucide:arrow-right"></iconify-icon></a>
+    </div>
+
+    <div class="mt-7 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <article class="bg-base-100 border-base-300 group overflow-hidden rounded-2xl border transition hover:-translate-y-1 hover:shadow-xl hover:shadow-navy/10">
+        <div class="bg-navy relative h-48 overflow-hidden">
+          <span class="text-navy-900 absolute top-3.5 left-3.5 z-10 rounded-full bg-white px-3 py-1 text-[11.5px] font-bold">Carilamat</span>
+          <img src="assets/img/berita/PESAKIT_KRITIKAL.jpeg" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        </div>
+        <div class="px-6 pt-5 pb-6">
+          <p class="text-base-content/55 flex items-center gap-2 text-[12.5px]"><iconify-icon icon="lucide:calendar" class="text-sm"></iconify-icon>14 Nov 2026</p>
+          <h3 class="mt-2.5 line-clamp-2 text-base leading-snug font-semibold">Maritim Malaysia bantu pemindahan pesakit kritikal</h3>
+          <a href="#" class="text-accent mt-3.5 inline-flex items-center gap-1.5 text-[13.5px] font-bold">Baca Selanjutnya <iconify-icon icon="lucide:arrow-right" class="transition group-hover:translate-x-1"></iconify-icon></a>
+        </div>
+      </article>
+      <article class="bg-base-100 border-base-300 group overflow-hidden rounded-2xl border transition hover:-translate-y-1 hover:shadow-xl hover:shadow-navy/10">
+        <div class="bg-navy relative h-48 overflow-hidden">
+          <span class="text-navy-900 absolute top-3.5 left-3.5 z-10 rounded-full bg-white px-3 py-1 text-[11.5px] font-bold">Penguatkuasaan</span>
+          <img src="assets/img/berita/SAWIT_SELUDUP.jpg" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        </div>
+        <div class="px-6 pt-5 pb-6">
+          <p class="text-base-content/55 flex items-center gap-2 text-[12.5px]"><iconify-icon icon="lucide:calendar" class="text-sm"></iconify-icon>10 Nov 2026</p>
+          <h3 class="mt-2.5 line-clamp-2 text-base leading-snug font-semibold">Maritim Malaysia Sandakan gagalkan pemindahan minyak sawit mentah tanpa kebenaran</h3>
+          <a href="#" class="text-accent mt-3.5 inline-flex items-center gap-1.5 text-[13.5px] font-bold">Baca Selanjutnya <iconify-icon icon="lucide:arrow-right" class="transition group-hover:translate-x-1"></iconify-icon></a>
+        </div>
+      </article>
+      <article class="bg-base-100 border-base-300 group overflow-hidden rounded-2xl border transition hover:-translate-y-1 hover:shadow-xl hover:shadow-navy/10">
+        <div class="bg-navy relative h-48 overflow-hidden">
+          <span class="text-navy-900 absolute top-3.5 left-3.5 z-10 rounded-full bg-white px-3 py-1 text-[11.5px] font-bold">Keselamatan</span>
+          <img src="assets/img/berita/nAKHODA_XKOMPETE.jpeg" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+        </div>
+        <div class="px-6 pt-5 pb-6">
+          <p class="text-base-content/55 flex items-center gap-2 text-[12.5px]"><iconify-icon icon="lucide:calendar" class="text-sm"></iconify-icon>5 Nov 2026</p>
+          <h3 class="mt-2.5 line-clamp-2 text-base leading-snug font-semibold">Bot penumpang salah guna lesen ditahan, nakhoda tidak kompeten</h3>
+          <a href="#" class="text-accent mt-3.5 inline-flex items-center gap-1.5 text-[13.5px] font-bold">Baca Selanjutnya <iconify-icon icon="lucide:arrow-right" class="transition group-hover:translate-x-1"></iconify-icon></a>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PERKHIDMATAN (kad foto gaya Logimax home-02) ============ -->
+<!-- Kandungan berdasarkan halaman Fungsi APMM (mmea.gov.my) -->
+<section id="perkhidmatan" class="bg-base-200/60 py-10 md:py-12">
+  <div class="container">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="text-accent flex items-center gap-2 text-sm font-bold tracking-wider uppercase"><span class="bg-secondary h-[3px] w-6 rounded-full"></span> Perkhidmatan Kami</p>
+        <h2 class="mt-3 text-3xl font-extrabold md:text-4xl">Menjaga keselamatan &amp; kedaulatan perairan negara</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" class="btn btn-circle btn-outline border-base-300 hover:bg-primary hover:border-primary hover:text-white" data-svc="-1" aria-label="Sebelum"><iconify-icon icon="lucide:arrow-left" class="text-lg"></iconify-icon></button>
+        <button type="button" class="btn btn-circle btn-primary" data-svc="1" aria-label="Seterusnya"><iconify-icon icon="lucide:arrow-right" class="text-lg"></iconify-icon></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jalur kad penuh lebar -->
+  <div class="mt-7 px-2">
+    <div class="svc-track no-scrollbar" id="svcTrack">
+      <a class="svc-card">
+        <img src="assets/img/berita/PESAKIT_KRITIKAL.jpeg" alt="Operasi mencari dan menyelamat Maritim Malaysia" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">Keselamatan di Laut</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Mencari &amp; Menyelamat</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+      <a class="svc-card">
+        <img src="assets/img/berita/TANGKAP_VSL.jpeg" alt="Penahanan vesel nelayan asing" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">Penguatkuasaan</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Penguatkuasaan Undang-undang</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+      <a class="svc-card is-active">
+        <img src="assets/img/berita/BOT_RAMPAS.jpeg" alt="Bot dirampas dalam operasi pencegahan jenayah" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">Penguatkuasaan</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Pencegahan Jenayah Maritim</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+      <a class="svc-card">
+        <img src="assets/img/berita/lumut.jpg" alt="Aset Maritim Malaysia di Lumut" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">Pengawasan</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Pengawasan Udara &amp; Pantai</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+      <a class="svc-card">
+        <img src="assets/img/berita/SAWIT_SELUDUP.jpg" alt="Kawalan pemindahan minyak di laut" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">Alam Sekitar</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Kawalan Pencemaran Maritim</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+      <a class="svc-card">
+        <img src="assets/img/berita/TAHAN_BOT_TUNDA.jpeg" alt="Operasi penahanan bot tunda" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">Operasi Khas</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Tindakan Khas &amp; Penyelamat</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+      <a class="svc-card">
+        <img src="assets/img/berita/HARI_BERSAMA_MEDIA_2026.jpeg" alt="Warga Maritim Malaysia" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">Sokongan</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Sokongan Agensi</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+      <a class="svc-card">
+        <img src="assets/img/berita/nAKHODA_XKOMPETE.jpeg" alt="Pemeriksaan bot penumpang" loading="lazy" />
+        <div class="svc-card__body"><div><p class="text-white/80">AMSAS</p><h3 class="mt-1 text-xl font-bold md:text-2xl">Latihan Maritim</h3></div><span class="svc-card__go"><iconify-icon icon="lucide:arrow-right"></iconify-icon></span></div>
+      </a>
+    </div>
+  </div>
+  <div class="container mt-5 flex items-center gap-4">
+    <div class="svc-progress flex-1"><span id="svcBar"></span></div>
+  </div>
+</section>
+
+<!-- ============ 3 LAJUR: AKSES SEGERA · INSTAGRAM · E-POSTER HUT ============ -->
+<section class="py-10 md:py-12">
+  <div class="container grid gap-6 lg:grid-cols-3">
+
+    <!-- Akses Segera -->
+    <div class="bg-base-100 border-base-300 flex flex-col rounded-2xl border p-6">
+      <p class="text-accent flex items-center gap-2 text-xs font-bold tracking-wider uppercase"><span class="bg-secondary h-[3px] w-5 rounded-full"></span> Pautan Pantas</p>
+      <h2 class="mt-2 text-2xl font-extrabold">Akses Segera</h2>
+      <div class="mt-5 grid flex-1 grid-cols-2 gap-2.5">
+        <a href="#" class="quick"><iconify-icon icon="lucide:message-square-text"></iconify-icon>eAduan</a>
+        <a href="#" class="quick"><iconify-icon icon="lucide:shield-check"></iconify-icon>Aduan Integriti</a>
+        <a href="#" class="quick"><iconify-icon icon="lucide:landmark"></iconify-icon>Tender</a>
+        <a href="#" class="quick"><iconify-icon icon="lucide:briefcase"></iconify-icon>Kerjaya</a>
+        <a href="#" class="quick"><iconify-icon icon="lucide:map-pinned"></iconify-icon>Peta Lokasi</a>
+        <a href="#" class="quick"><iconify-icon icon="lucide:book-open"></iconify-icon>Majalah Seahawk</a>
+        <a href="#" class="quick"><iconify-icon icon="lucide:mail"></iconify-icon>Webmail</a>
+        <a href="#" class="quick"><iconify-icon icon="lucide:circle-help"></iconify-icon>Soalan Lazim</a>
+      </div>
+    </div>
+
+    <!-- Instagram: 1 hantaran @malaysia_coastguard (iframe embed rasmi) -->
+    <div class="bg-base-100 border-base-300 flex flex-col rounded-2xl border p-6">
+      <div class="flex items-end justify-between gap-3">
+        <div>
+          <p class="text-accent flex items-center gap-2 text-xs font-bold tracking-wider uppercase"><span class="bg-secondary h-[3px] w-5 rounded-full"></span> Media Sosial</p>
+          <h2 class="mt-2 text-2xl font-extrabold">Instagram</h2>
+        </div>
+        <a href="https://www.instagram.com/malaysia_coastguard/" target="_blank" rel="noopener" class="text-primary hover:text-accent inline-flex items-center gap-1.5 text-sm font-bold"><iconify-icon icon="ri:instagram-line" class="text-lg"></iconify-icon>@malaysia_coastguard</a>
+      </div>
+      <div class="border-base-300 mt-5 flex-1 overflow-hidden rounded-xl border bg-white">
+        <iframe src="https://www.instagram.com/p/DfYsgFyP9LT/embed" title="Hantaran Instagram Maritim Malaysia" class="block h-[440px] w-full" frameborder="0" scrolling="no" loading="lazy" allowtransparency="true"></iframe>
+      </div>
+    </div>
+
+    <!-- E-Poster HUT -->
+    <div class="bg-navy flex flex-col rounded-2xl p-6 text-white">
+      <div class="flex items-end justify-between gap-3">
+        <div>
+          <p class="text-secondary flex items-center gap-2 text-xs font-bold tracking-wider uppercase"><span class="bg-secondary h-[3px] w-5 rounded-full"></span> Hebahan</p>
+          <h2 class="mt-2 text-2xl font-extrabold">E-Poster HUT</h2>
+        </div>
+        <div class="flex gap-1.5">
+          <button type="button" class="btn btn-circle btn-sm border-white/20 bg-white/10 text-white hover:bg-secondary hover:text-secondary-content" data-hut="-1" aria-label="Sebelum"><iconify-icon icon="lucide:chevron-left"></iconify-icon></button>
+          <button type="button" class="btn btn-circle btn-sm btn-secondary" data-hut="1" aria-label="Seterusnya"><iconify-icon icon="lucide:chevron-right"></iconify-icon></button>
+        </div>
+      </div>
+      <div id="hutTrack" class="no-scrollbar mt-5 flex flex-1 snap-x snap-mandatory overflow-x-auto scroll-smooth rounded-xl">
+        <img src="assets/img/hut/hut-1.jpg" alt="Sambutan Hari Ulang Tahun APMM" class="max-h-[400px] w-full flex-none snap-start object-contain" />
+        <img src="assets/img/hut/hut-2.jpg" alt="E-Poster HUT" class="max-h-[400px] w-full flex-none snap-start object-contain" />
+        <img src="assets/img/hut/hut-3.jpg" alt="E-Poster HUT" class="max-h-[400px] w-full flex-none snap-start object-contain" />
+        <img src="assets/img/hut/hut-4.jpg" alt="E-Poster HUT" class="max-h-[400px] w-full flex-none snap-start object-contain" />
+        <img src="assets/img/hut/hut-5.jpg" alt="E-Poster HUT" class="max-h-[400px] w-full flex-none snap-start object-contain" />
+      </div>
+      <a href="#" class="text-secondary mt-4 inline-flex items-center gap-1.5 text-sm font-bold">Lihat Semua <iconify-icon icon="lucide:arrow-right"></iconify-icon></a>
+    </div>
+
+  </div>
+</section>
+<!-- ============ PAUTAN AGENSI ============ -->
+<section class="border-base-200 border-b">
+  <div class="container py-6 md:py-8">
+    <p class="text-base-content/60 text-center font-medium">Pautan Agensi</p>
+    <div class="marquee mt-4">
+      <div class="marquee__track items-center">
+        <img src="assets/img/agensi/kkdnlogo.gif" alt="Kementerian Dalam Negeri" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/KSN.png" alt="Ketua Setiausaha Negara" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/MyGov.png" alt="MyGov" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/cropped-logo-SPRM.png" alt="SPRM" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/SPA.png" alt="Suruhanjaya Perkhidmatan Awam" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/MDEC.png" alt="MDEC" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/hrmis.png" alt="HRMIS" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/AMSAS.png" alt="AMSAS" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/kkdnlogo.gif" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/KSN.png" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/MyGov.png" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/cropped-logo-SPRM.png" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/SPA.png" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/MDEC.png" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/hrmis.png" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+        <img src="assets/img/agensi/AMSAS.png" alt="" aria-hidden="true" class="h-12 w-auto grayscale opacity-70 transition hover:grayscale-0 hover:opacity-100" />
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-navy-900 relative text-white">
+  <!-- Talian kecemasan di atas footer (reka bentuk & warna ikut maritim/index.html, saiz lebih padat) -->
+  <div class="sos-cta">
+    <div class="container relative z-10 flex flex-wrap items-center justify-between gap-4 py-6">
+      <div class="flex items-center gap-4">
+        <span class="inline-flex size-11 flex-none items-center justify-center rounded-full bg-white/15 text-xl"><iconify-icon icon="lucide:phone-call"></iconify-icon></span>
+        <div>
+          <p class="font-heading text-lg font-extrabold md:text-xl">Kecemasan di laut? Jangan tunggu.</p>
+          <p class="text-sm text-[#FFD7DA]">Pusat Operasi Maritim beroperasi 24 jam sehari, 7 hari seminggu · POMM 03-8995 7208</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-2.5">
+        <a href="#" class="btn btn-secondary rounded-field border-0"><iconify-icon icon="lucide:phone"></iconify-icon> Hubungi 999</a>
+        <a href="#" class="btn rounded-field border-white/40 bg-transparent text-white shadow-none hover:bg-white/10">Muat Turun Aplikasi</a>
+      </div>
+    </div>
+  </div>
+  <div class="relative container pt-10 md:pt-12">
+    <div class="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-12">
+      <div class="col-span-2 md:col-span-4 lg:col-span-4">
+        <p class="font-heading text-lg font-bold uppercase">Agensi Penguatkuasaan Maritim Malaysia</p>
+        <p class="text-white/65 mt-3 max-w-sm text-sm">Kementerian Dalam Negeri<br />Aras 4-12, One IOI Square, IOI Resort, 62502 Putrajaya.</p>
+        <p class="mt-3 text-sm">Tel: <b>03-8995 7000</b> · Faks: 03-8941 4000</p>
+        <div class="mt-5 flex items-center gap-2">
+          <a href="#" class="btn btn-sm btn-circle border-white/10 bg-white/10 text-white hover:bg-secondary hover:text-secondary-content" aria-label="Facebook"><iconify-icon icon="ri:facebook-fill"></iconify-icon></a>
+          <a href="#" class="btn btn-sm btn-circle border-white/10 bg-white/10 text-white hover:bg-secondary hover:text-secondary-content" aria-label="X"><iconify-icon icon="ri:twitter-x-fill"></iconify-icon></a>
+          <a href="#" class="btn btn-sm btn-circle border-white/10 bg-white/10 text-white hover:bg-secondary hover:text-secondary-content" aria-label="Instagram"><iconify-icon icon="ri:instagram-line"></iconify-icon></a>
+          <a href="#" class="btn btn-sm btn-circle border-white/10 bg-white/10 text-white hover:bg-secondary hover:text-secondary-content" aria-label="YouTube"><iconify-icon icon="ri:youtube-fill"></iconify-icon></a>
+          <a href="#" class="btn btn-sm btn-circle border-white/10 bg-white/10 text-white hover:bg-secondary hover:text-secondary-content" aria-label="TikTok"><iconify-icon icon="ri:tiktok-fill"></iconify-icon></a>
+        </div>
+      </div>
+      <div class="lg:col-span-2 lg:col-start-6">
+        <p class="font-semibold">Perkhidmatan</p>
+        <div class="text-white/65 mt-4 flex flex-col space-y-1.5 text-sm *:hover:text-white">
+          <a href="#">Mencari &amp; Menyelamat</a><a href="#">Penguatkuasaan</a><a href="#">Pengawasan Udara &amp; Pantai</a><a href="#">Kawalan Pencemaran</a>
+        </div>
+      </div>
+      <div class="lg:col-span-2">
+        <p class="font-semibold">Artikel Popular</p>
+        <div class="text-white/65 mt-4 flex flex-col space-y-1.5 text-sm *:hover:text-white">
+          <a href="objektif.html">Objektif APMM</a><a href="#">Visi &amp; Misi</a><a href="#">Fungsi APMM</a><a href="#">Jawatan Kosong</a><a href="#">Piagam Pelanggan</a>
+        </div>
+      </div>
+      <div class="col-span-2 md:col-span-2 lg:col-span-3 lg:col-start-10">
+        <p class="font-semibold">Jumlah Pelawat</p>
+        <div class="mt-2 text-sm">
+          <div class="flex items-center justify-between border-b border-dashed border-white/15 py-2"><span class="text-white/65">Hari Ini</span><span class="font-semibold tabular-nums">1,248</span></div>
+          <div class="flex items-center justify-between border-b border-dashed border-white/15 py-2"><span class="text-white/65">Bulan Ini</span><span class="font-semibold tabular-nums">18,532</span></div>
+          <div class="flex items-center justify-between border-b border-dashed border-white/15 py-2"><span class="text-white/65">Jumlah</span><span class="font-semibold tabular-nums">666,362</span></div>
+        </div>
+        <p class="mt-3 text-xs text-white/50">Kemaskini terakhir: 17 November 2026</p>
+      </div>
+    </div>
+    <div class="border-white/10 mt-8 flex flex-wrap items-center justify-between gap-3 border-t py-5 text-sm">
+      <p class="text-white/65">Hak Cipta © 2026 Agensi Penguatkuasaan Maritim Malaysia</p>
+      <p class="text-white/65"><a href="#" class="hover:text-white">Penafian</a> · <a href="#" class="hover:text-white">Dasar Privasi</a> · <a href="#" class="hover:text-white">Dasar Keselamatan</a></p>
+    </div>
+  </div>
+</footer>
+
+<!-- Modal carian -->
+<dialog id="searchModal" class="modal modal-top sm:modal-middle">
+  <div class="modal-box p-0">
+    <label class="input input-lg w-full rounded-none border-0 border-b border-base-200 focus-within:outline-none">
+      <iconify-icon icon="lucide:search" class="opacity-50"></iconify-icon>
+      <input type="search" placeholder="Cari perkhidmatan, berita, pejabat maritim..." />
+    </label>
+    <div class="p-4">
+      <p class="text-base-content/50 text-xs font-semibold uppercase">Carian popular</p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <a href="#" class="badge badge-outline">eAduan</a><a href="#" class="badge badge-outline">Jawatan kosong</a><a href="#" class="badge badge-outline">Tender</a><a href="#" class="badge badge-outline">Maritim Negeri</a>
+      </div>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>tutup</button></form>
+</dialog>
+</div><!-- /#a11y-root -->
+
+<script>
+  // Topbar: bayang apabila skrol
+  const topbar = document.getElementById('topbar');
+  const onScroll = () => topbar.dataset.scrolled = window.scrollY > 40;
+  window.addEventListener('scroll', onScroll); onScroll();
+
+  // Bahasa (visual sahaja) + bahasa panel kebolehcapaian
+  document.querySelectorAll('#langSwitch button').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('#langSwitch button').forEach(b => { b.className = 'text-white/50 hover:text-white'; b.setAttribute('aria-pressed', 'false'); });
+    btn.className = 'text-white'; btn.setAttribute('aria-pressed', 'true');
+    if (window.A11y) A11y.setLang(btn.textContent.trim() === 'EN' ? 'en' : 'ms');
+  }));
+
+  // Kenal pasti begini
+  const govToggle = document.getElementById('govToggle'), govInfo = document.getElementById('govInfo');
+  govToggle.addEventListener('click', () => {
+    const open = govToggle.getAttribute('aria-expanded') !== 'true';
+    govToggle.setAttribute('aria-expanded', open);
+    govInfo.dataset.open = open;
+  });
+
+  // Perkhidmatan: anak panah gelongsor satu kad
+  const svcTrack = document.getElementById('svcTrack');
+  document.querySelectorAll('[data-svc]').forEach(b => b.addEventListener('click', () => {
+    const card = svcTrack.querySelector('.svc-card');
+    svcTrack.scrollBy({ left: +b.dataset.svc * (card.offsetWidth + 8) });
+  }));
+  // Kad aktif ikut hover terakhir
+  svcTrack.querySelectorAll('.svc-card').forEach(c => c.addEventListener('mouseenter', () => {
+    svcTrack.querySelectorAll('.svc-card').forEach(x => x.classList.remove('is-active'));
+    c.classList.add('is-active');
+  }));
+
+  // Perkhidmatan: seret dengan tetikus + roda tetikus mendatar + bar kemajuan
+  let drag = null, moved = false;
+  svcTrack.addEventListener('pointerdown', e => {
+    if (e.pointerType !== 'mouse') return;
+    drag = { x: e.clientX, left: svcTrack.scrollLeft }; moved = false;
+  });
+  window.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const dx = e.clientX - drag.x;
+    if (Math.abs(dx) > 5) { moved = true; svcTrack.classList.add('is-dragging'); }
+    svcTrack.scrollLeft = drag.left - dx;
+  });
+  window.addEventListener('pointerup', () => {
+    if (!drag) return;
+    drag = null; svcTrack.classList.remove('is-dragging');
+  });
+  svcTrack.addEventListener('click', e => { if (moved) { e.preventDefault(); moved = false; } }, true);
+  svcTrack.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX) && e.shiftKey) { svcTrack.scrollLeft += e.deltaY; e.preventDefault(); }
+  }, { passive: false });
+  const svcBar = document.getElementById('svcBar');
+  const updateBar = () => {
+    const max = svcTrack.scrollWidth - svcTrack.clientWidth;
+    const ratio = svcTrack.clientWidth / svcTrack.scrollWidth;
+    svcBar.style.width = (ratio * 100) + '%';
+    svcBar.style.transform = `translateX(${max > 0 ? (svcTrack.scrollLeft / max) * (1 / ratio - 1) * 100 : 0}%)`;
+  };
+  svcTrack.addEventListener('scroll', updateBar, { passive: true });
+  window.addEventListener('resize', updateBar); updateBar();
+
+  // E-Poster HUT
+  const hutTrack = document.getElementById('hutTrack');
+  document.querySelectorAll('[data-hut]').forEach(b => b.addEventListener('click', () => hutTrack.scrollBy({ left: +b.dataset.hut * hutTrack.clientWidth })));
+</script>
+<script src="accessibility/a11y.js" data-lang="ms" data-storage-key="maritim-v3-a11y" defer></script>
+</body>
+</html>
